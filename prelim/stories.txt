@@ -1,0 +1,32 @@
+PLAYER
+
+Attributes:
+- Symbol ('x' or 'o')
+- Score
+- Turn
+
+Behaviors
+- Fill square
+
+
+COMPUTER
+
+Attributes
+- Symbol ('x' or 'o')
+- Score
+- Turn
+
+Behaviors
+- Fill Square
+
+
+BOARD
+
+Attributes:
+- Spaces
+- Rounds
+
+Behaviors
+- Evaluate Moves
+- Increase Score + Rounds
+- Clear Spaces
