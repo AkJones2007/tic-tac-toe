@@ -4,51 +4,46 @@
  * --------------------------------------------------------
  */
 
-// Declare object for the human player
-var player = {
-  // Store the symbol 'x'
-  symbol: 'x',
+// Define object constructor for a new player
+// Take symbol as an argument ('x' or 'o') and whether the player
+// is a human or a computer
+var Player = function Player(symbol, isComputer) {
+  // Set symbol
+  this.symbol = symbol;
+  // Set score
+  this.score = 0;
+  // Set turn
+  this.turn = false;
+  // Set AI
+  this.computer = isComputer;
+};
 
-  // Store the amount of wins '0'
-  score: 0,
+// Define Player prototype methods
 
-  // Store a boolean for player's turn 'true'
-  turn: true,
+// Set method for making a move. Takes a board index as an argument
+Player.prototype.move = function(index) {
+  // Check if it's the player's turn
+  if (!this.turn) {
+    // If not, do nothing. Return the function to stop the code.
+    return false;
+  }
 
-  // Move method
-  move: function(square, index) {
-    // Check to see if it's the player's turn
-    if (turn) {
-      // Check if square is empty
-      if (!index) {
-        // Fill the square
-        square = this.symbol;
-        board.square[index] = this.symbol;
-
-        // Invoke check board method.
-        board.check();
-
-        // If false...invoke computer move method
-        computer.move();
-
-      }
+  // Check if the player is a computer
+  if (this.computer) {
+    // If the player is a computer, set the index to a random number
+    index = Math.floor(Math.random() * 9);
+    // Keep generating a new index until an empty tile is found
+    while(board.tiles[index]) {
+      index = Math.floor(Math.random() * 9);
     }
   }
-}
 
-// Object to handle the computer player
-var computer = {
-  // Store the symbol 'o'
-  // Store the amount of wins '0'
-  // Store a boolean for the computer's turn 'false'
-  // Move method
-    // Check to see if it's the computer's turn
-      // If it is, collect vacant squares indexes in array
-      // Generate a random number based on array length
-      // Use random number as a reference to vacant space
-      // array, and fill space at that index on the board
-      // Invoke check board function
-}
+  // Invoke the mark board method, passing the symbol and index as arguments
+  board.mark(index, this.symbol);
+
+};
+
+
 
 
 /*
@@ -57,16 +52,19 @@ var computer = {
  * --------------------------------------------------------
  */
 
-// Game object to handle scoring and rounds
-var game = {
+// Define object constructor for a new game
+  // Set player 1 (x)
+  // Set player 2 (o)
+  // Set new board
+  // Set current round
+  // Set max rounds
 
-  round: 1,
+// Define the game object prototype
 
-  // Method that checks for a win
+// Methdod to check for win
+// Method to take action if there is a win
 
-  // Method that takes action if there is a win
 
-}
 
 
 /*
@@ -181,12 +179,14 @@ Board.prototype.mark = function(index, symbol) {
 
 
 // TESTS
-var test;
+var board = new Board(3);
+var player = new Player('x', false);
+player.turn = true;
 
-test = new Board(3);
+console.log(board.tiles);
 
-test.mark(0, 'x');
-test.mark(4, 'x');
-test.mark(8, 'x');
+player.move(1);
+console.log(board.tiles);
 
-console.log(test.diagonals());
+player.move(5);
+console.log(board.tiles);
