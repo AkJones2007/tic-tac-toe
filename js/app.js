@@ -33,13 +33,13 @@ Player.prototype.move = function(index) {
     // If the player is a computer, set the index to a random number
     index = Math.floor(Math.random() * 9);
     // Keep generating a new index until an empty tile is found
-    while(board.tiles[index]) {
+    while(game.board.tiles[index]) {
       index = Math.floor(Math.random() * 9);
     }
   }
 
   // Invoke the mark board method, passing the symbol and index as arguments
-  board.mark(index, this.symbol);
+  game.board.mark(index, this.symbol);
 
 };
 
@@ -52,17 +52,106 @@ Player.prototype.move = function(index) {
  * --------------------------------------------------------
  */
 
-// Define object constructor for a new game
+// Define object constructor to create a new game
+var Game = function Game(rounds, boardWidth) {
   // Set player 1 (x)
+  this.player1 = new Player('x', false);
   // Set player 2 (o)
+  this.player2 = new Player('o', true);
   // Set new board
+  this.board = new Board(boardWidth);
   // Set current round
+  this.currentRound = 1;
   // Set max rounds
+  this.maxRounds = rounds;
+}
 
 // Define the game object prototype
 
-// Methdod to check for win
+// Method to check for matching characters in a line
+// Takes a character and an array as arguments, and returns a boolean
+Game.prototype.match = function (character, array) {
+  // Produce a string of values by repeating a character a number of times (based on board width)
+  var toMatch = '';
+
+  for (var i = 0; i < this.board.width; i++) {
+    toMatch += character;
+  }
+
+  // Compare string of values with the joined array
+  return array.join('') === toMatch;
+};
+
+
+// Method to check for win
+// Takes a player number (1 or 2) and evaluates board to check for a win
+Game.prototype.check = function (playerNum) {
+  // Set player name for accessing the player in the game object
+  var player = 'player' + playerNum;
+  var symbol = this[player].symbol;
+
+  // Iterate through rows, invoke match method on each iteration. If true value is thrown, invoke win method
+  for (var i = 0; i < this.board.width; i++) {
+    var rows = this.board.rows();
+    if(this.match(symbol, rows[i])) {
+      return this.win(player);
+    }
+  }
+
+  // Iterate through columns, invoke match method on each iteration. If true value is thrown, invoke win method
+  for (var i = 0; i < this.board.width; i++) {
+    var columns = this.board.columns();
+    if(this.match(symbol, columns[i])) {
+      return this.win(player);
+    }
+  }
+
+  // Iterate through diagonals, invoke match method on each iteration. If true value is thrown, invoke win method
+  for (var i = 0; i < 2; i++) {
+    var diagonals = this.board.diagonals();
+    if(this.match(symbol, diagonals[i])) {
+      return this.win(player);
+    }
+  }
+
+  // Change turn state for both players
+  this.player1.turn = !this.player1.turn;
+  this.player2.turn = !this.player2.turn;
+
+};
+
+
 // Method to take action if there is a win
+// Takes the player number as an argument
+Game.prototype.win = function(player) {
+  // Increment player's score
+  this[player].score++;
+  // Check if the current round is equal to the defined maximum
+  if(this.currentRound === this.maxRounds) {
+    // If it is, declare a winner!
+    if(this.player1.score > this.player2.score) {
+      return console.log('Player 1 is the winner!');
+    }
+    else {
+      return console.log('Player 2 is the winner!');
+    }
+  }
+
+  else {
+    // If it isn't, increment current round
+    this.currentRound++;
+  }
+
+  // Change turn states
+  this.player1.turn = !this.player1.turn;
+  this.player2.turn = !this.player2.turn;
+
+  // Reset the board
+  this.board.reset();
+
+};
+
+
 
 
 
@@ -174,19 +263,26 @@ Board.prototype.mark = function(index, symbol) {
   this.tiles[index] = symbol;
 };
 
+// Method to reset the board
+Board.prototype.reset = function() {
+  this.tiles = this.tiles.map(function(a) {
+    return null;
+  });
+};
+
 
 // DOM stuff will go down here
 
 
 // TESTS
-var board = new Board(3);
-var player = new Player('x', false);
-player.turn = true;
+var game = new Game(5, 3);
+game.player1.turn = true;
 
-console.log(board.tiles);
+game.player1.move(1);
+game.player1.move(4);
+game.player1.move(2);
 
-player.move(1);
-console.log(board.tiles);
+console.log(game.board.tiles);
 
-player.move(5);
-console.log(board.tiles);
+game.board.reset();
+console.log(game.board.tiles);
