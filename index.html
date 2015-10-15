@@ -3,6 +3,10 @@
 <head>
   <title>TIC-TAC-TOE</title>
   <link rel="stylesheet" type="text/css" href="styles/style.css">
+
+  <script src="js/jquery-2.1.4.js"></script>
+  <script src="js/app.js" type="text/javascript" charset="utf-8" async defer></script>
+
 </head>
 
 <body>
@@ -11,9 +15,9 @@
 
     <div class="scoreboard left">
 
-      <h2>Your Wins</h2>
+      <h2>X's Wins</h2>
       <div class="score">
-        <h1>12</h1>
+        <h1 id='score-x'>0</h1>
       </div>
 
     </div>
@@ -26,45 +30,36 @@
 
         <div class="board-row">
           <div class = 'board-panel'>
-            <h1>x</h1>
           </div>
           <div class = 'board-panel'>
-            <h1>x</h1>
           </div>
           <div class = 'board-panel'>
-            <h1>x</h1>
           </div>
         </div>
 
         <div class="board-row">
           <div class = 'board-panel'>
-            <h1>x</h1>
           </div>
           <div class = 'board-panel'>
-            <h1>x</h1>
           </div>
           <div class = 'board-panel'>
-            <h1>x</h1>
           </div>
         </div>
 
         <div class="board-row">
           <div class = 'board-panel'>
-            <h1>x</h1>
           </div>
           <div class = 'board-panel'>
-            <h1>x</h1>
           </div>
           <div class = 'board-panel'>
-            <h1>o</h1>
           </div>
         </div>
 
       </div>
 
-      <h3>Round 1</h3>
+      <h3 id='round'></h3>
 
-      <div class="button">
+      <div class="button" id='new-game'>
         <a href = '#'><h3>NEW GAME</h3></a>
       </div>
 
@@ -72,9 +67,9 @@
 
     <div class="scoreboard right">
 
-      <h2>Their Wins</h2>
+      <h2>O's Wins</h2>
       <div class="score">
-        <h1>12</h1>
+        <h1 id='score-o'>0</h1>
       </div>
 
     </div>

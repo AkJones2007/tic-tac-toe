@@ -33,13 +33,16 @@ Player.prototype.move = function(index) {
     // If the player is a computer, set the index to a random number
     index = Math.floor(Math.random() * 9);
     // Keep generating a new index until an empty tile is found
-    while(board.tiles[index]) {
+    while(game.board.tiles[index]) {
       index = Math.floor(Math.random() * 9);
     }
+    // Mark the board
+    game.board.mark(index, this.symbol);
   }
 
-  // Invoke the mark board method, passing the symbol and index as arguments
-  board.mark(index, this.symbol);
+  // If the player is a human being, mark the board
+  game.board.mark(index, this.symbol);
+  console.log(game.board.tiles);
 
 };
 
@@ -52,17 +55,142 @@ Player.prototype.move = function(index) {
  * --------------------------------------------------------
  */
 
-// Define object constructor for a new game
+// Define object constructor to create a new game
+var Game = function Game(rounds, boardWidth) {
+  // Indicate whose turn it is
+  this.currentTurn = 'playerx';
   // Set player 1 (x)
+  this.playerx = new Player('x', false);
   // Set player 2 (o)
+  this.playero = new Player('o', false);
   // Set new board
+  this.board = new Board(boardWidth);
   // Set current round
+  this.currentRound = 1;
   // Set max rounds
+  this.maxRounds = rounds;
+}
 
 // Define the game object prototype
 
-// Methdod to check for win
+// Method to check for matching characters in a line
+// Takes a character and an array as arguments, and returns a boolean
+Game.prototype.match = function (character, array) {
+  // Produce a string of values by repeating a character a number of times (based on board width)
+  var toMatch = '';
+
+  for (var i = 0; i < this.board.width; i++) {
+    toMatch += character;
+  }
+
+  // Compare string of values with the joined array
+  return array.join('') === toMatch;
+};
+
+
+// Method to check for win
+// Takes a player symbol and evaluates board to check for a win
+Game.prototype.check = function() {
+  // Set player name for accessing the player in the game object
+  var player = this.currentTurn;
+  var symbol = this[player].symbol;
+
+  // Iterate through rows, invoke match method on each iteration. If true value is thrown, invoke win method
+  for (var i = 0; i < this.board.width; i++) {
+    var rows = this.board.rows();
+    if(this.match(symbol, rows[i])) {
+      return this.win();
+    }
+  }
+
+  // Iterate through columns, invoke match method on each iteration. If true value is thrown, invoke win method
+  for (var i = 0; i < this.board.width; i++) {
+    var columns = this.board.columns();
+    if(this.match(symbol, columns[i])) {
+      return this.win();
+    }
+  }
+
+  // Iterate through diagonals, invoke match method on each iteration. If true value is thrown, invoke win method
+  for (var i = 0; i < 2; i++) {
+    var diagonals = this.board.diagonals();
+    if(this.match(symbol, diagonals[i])) {
+      return this.win();
+    }
+  }
+
+  // Change turn state for both players
+  return this.nextTurn();
+
+};
+
+
 // Method to take action if there is a win
+// Takes the player number as an argument
+Game.prototype.win = function() {
+  var player = this.currentTurn;
+  var symbol = this[player].symbol;
+  // Increment player's score
+  this[player].score++;
+  // Check if the current round is equal to the defined maximum
+  if(this.currentRound === this.maxRounds) {
+    // If it is, declare a winner!
+    if(this.playerx.score > this.playero.score) {
+      alert('X is the champion!');
+    }
+    else {
+      alert('O is the champion!');
+    }
+  }
+
+  else {
+    // If it isn't, increment current round
+    this.currentRound++;
+  }
+
+  // Change turn states
+  this.playerx.turn = true;
+  this.playero.turn = false;
+
+  this.currentTurn = 'playerx';
+
+  // Reset the board
+  this.board.reset();
+
+  // Update the DOM
+  game.update();
+
+};
+
+Game.prototype.nextTurn = function() {
+  // Find out whose turn it is
+  var player = this.currentTurn;
+
+  // Set each player's turn status to the opposite
+  this.playerx.turn = !this.playerx.turn;
+  this.playero.turn = !this.playero.turn;
+
+  // It is now the other player's turn!
+  if(player === 'playerx') {
+    this.currentTurn = 'playero';
+  }
+  else {
+    this.currentTurn = 'playerx';
+  }
+
+}
+
+// Method that updates all of the information in the DOM (score, rounds, board, etc.)
+Game.prototype.update = function() {
+
+  // Update scores
+  $('#score-x').text(this.playerx.score);
+  $('#score-o').text(this.playero.score);
+
+  // Update rounds
+  $('#rounds').text('Round ' + this.currentRound + ' out of ' + this.maxRounds);
+
+};
 
 
 
@@ -171,22 +299,45 @@ Board.prototype.diagonals = function() {
 
 // Method to mark board at given index with given symbol
 Board.prototype.mark = function(index, symbol) {
-  this.tiles[index] = symbol;
+
+  // If the tile is empty, mark the tile
+  if(!this.tiles[index]) {
+    this.tiles[index] = symbol;
+    // Mark the tile in the DOM
+    $(event.target).html('<h1>' + symbol + '</h1>');
+  }
+
+  // Check if there is a win
+  game.check(symbol);
+
 };
 
+// Method to reset the board
+Board.prototype.reset = function() {
+  this.tiles = this.tiles.map(function(a) {
+    return null;
+  });
 
-// DOM stuff will go down here
+  $('.board-panel').each(function() {
+    $(this).html('');
+  });
 
+};
 
-// TESTS
-var board = new Board(3);
-var player = new Player('x', false);
-player.turn = true;
+// Create a variable to hold the Game() object
+var game = new Game(3, 3);
+game.playerx.turn = true;
 
-console.log(board.tiles);
+// Initialize the DOM
+$(function() {
 
-player.move(1);
-console.log(board.tiles);
+  game.update();
 
-player.move(5);
-console.log(board.tiles);
+  $('.board-panel').each(function(index) {
+    $(this).on('click', function() {
+      player = game.currentTurn;
+      game[player].move(index);
+    });
+  });
+
+});
