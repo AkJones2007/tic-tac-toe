@@ -102,6 +102,12 @@ Game.prototype.check = function() {
     }
   }
 
+  // Check for a tie. Join the board array, and check the length.
+  var boardLength = this.board.tiles.join('').length;
+  if(boardLength === this.board.size) {
+    this.tie();
+  }
+
   // If no match is found, change the turn state for both players
   return this.nextTurn();
 
@@ -120,8 +126,11 @@ Game.prototype.win = function() {
     if(this.playerx.score > this.playero.score) {
       alert('X is the champion!');
     }
-    else {
+    else if (this.playerx.score < this.player0.score) {
       alert('O is the champion!');
+    }
+    else {
+      alert('Tis a tie!')
     }
     this.over = true;
   }
@@ -143,6 +152,42 @@ Game.prototype.win = function() {
   game.update();
 
 };
+
+Game.prototype.tie = function() {
+  var player = this.currentTurn;
+  var symbol = this[player].symbol;
+
+  // If this was the last round, declare a champion, and set the game to 'over'
+  if(this.currentRound === this.maxRounds) {
+    if(this.playerx.score > this.playero.score) {
+      alert('X is the champion!');
+    }
+    else if (this.playerx.score < this.player0.score) {
+      alert('O is the champion!');
+    }
+    else {
+      alert('Tis a tie!')
+    }
+    this.over = true;
+  }
+
+  // If this isn't the last round, increment the round
+  else {
+    this.currentRound++;
+  }
+
+  // Reset turn states
+  this.playerx.turn = true;
+  this.playero.turn = false;
+  this.currentTurn = 'playerx';
+
+  // Reset the board
+  this.board.reset();
+
+  // Update the DOM
+  game.update();
+
+}
 
 // This method changes the turn states
 Game.prototype.nextTurn = function() {
