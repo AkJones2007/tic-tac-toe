@@ -4,27 +4,62 @@
   <title>TIC-TAC-TOE</title>
   <link rel="stylesheet" type="text/css" href="styles/style.css">
 
+  <!-- Load the scripts -->
   <script src="js/jquery-2.1.4.js"></script>
+  <script src="js/definitions.js" type="text/javascript" charset="utf-8" async defer></script>
   <script src="js/app.js" type="text/javascript" charset="utf-8" async defer></script>
+  <script src="js/ttt-api.js" type="text/javascript" charset="utf-8" async defer></script>
 
 </head>
 
 <body>
 
+<!-- Landing page to enter login information/register -->
+<div class = 'splash'>
+
+  <div class = 'login-welcome'>
+    <h1>Welcome to Tic-Tac-Toe!</h1>
+    <h2>Please login or register to continue</h2>
+  </div>
+
+  <div class='login-container'>
+
+    <div class = 'login-toggle'>
+      <button id = 'login-button'>LOGIN</button>
+      <button id = 'register-button'>REGISTER</button>
+    </div>
+
+    <form id="login">
+      <input name="email" type="text" placeholder="email">
+      <input name="password" type="password" placeholder="password">
+      <input name="login" type="submit" value="Login">
+    </form>
+
+    <form id="register">
+      <input name="email" type="text" placeholder="email">
+      <input name="password" type="password" placeholder="password">
+      <input name="password_confirmation" type="password" placeholder="password confirmation">
+      <input name="register" type="submit" value="Register">
+    </form>
+
+  </div>
+
+</div>
+
+<!-- Game area -->
   <div class="container">
 
+    <!-- Player X's score -->
     <div class="scoreboard left">
-
       <h2>X's Wins</h2>
-      <div class="score">
-        <h1 id='score-x'>0</h1>
-      </div>
-
+      <h1 id='score-x'>0</h1>
     </div>
 
     <div class="center-col">
 
       <h1>TIC-TAC-TOE</h1>
+
+      <!-- The board -->
 
       <div class = 'board'>
 
@@ -57,21 +92,18 @@
 
       </div>
 
+      <!-- Current round -->
       <h3 id='round'></h3>
 
-      <div class="button" id='new-game'>
-        <a href = '#'><h3>NEW GAME</h3></a>
-      </div>
+      <!-- Reset the game -->
+      <input type="button" id='new-game' value='NEW GAME'></button>
 
     </div>
 
+    <!-- Player O's score -->
     <div class="scoreboard right">
-
       <h2>O's Wins</h2>
-      <div class="score">
-        <h1 id='score-o'>0</h1>
-      </div>
-
+      <h1 id='score-o'>0</h1>
     </div>
 
   </div>
